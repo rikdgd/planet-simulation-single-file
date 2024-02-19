@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Simulation</title>
+    <script>
+        class Planet {
+            constructor(x, y, mass, xVel, yVel) {
+                this.x = x;
+                this.y = y;
+                this.mass = mass;
+                this.radius = massToRadius(mass);
+                this.xVel = xVel;
+                this.yVel = yVel;
+            }
+
+            getRadius() {
+                return Math.pow(this.mass / ((4*Math.PI) / 3), 1/3);
+            }
+        }
+
+        // Calculates distance from planet A to planet B
+        function claculateDistance(planetA, planetB) {
+            let distance = Math.sqrt((planetB.x - planetA.x)**2 + (planetB.y - planetA.y)**2);
+            if (distance < 0) distance = distance * -1;
+            return distance;
+        }
+
+        // Calculates the force of gravity acted upon planet A by planet B.
+        function calculateForceGravity(planetA, planetB) {
+            const massSquared = planetA.mass * planetB.mass;
+            const distance = claculateDistance(planetA, planetB);
+            return massSquared / distance**2;
+        }
+
+        // Calculates the acceleration of planet A due to planet B
+        function calculateXYAcceleration(planetA, planetB) {
+            const xDistance = planetB.x - planetA.x;
+            const yDistance = planetB.y - planetA.y;
+            const forceGravity = calculateForceGravity(planetA, planetB);
+
+            // Old code, yeah I know it doesn't make sence.
+            const xAcceleration = (forceGravity * xDistance) * 0.000000067 * planetB.mass;
+            const yAcceleration = (forceGravity * yDistance) * 0.000000067 * planetB.mass;
+            return [xAcceleration, yAcceleration];
+        }
+
+        function drawPlanet() {
+            const canvas = document.getElementById("planetCanvas");
+            const ctx = canvas.getContext("2d");
+
+            
+            ctx.beginPath();
+            // ctx.arc(planet.x, planet.y, planet.radius, 0, 2 * Math.PI);
+            ctx.arc(100, 100, 20, 0, 2 * Math.PI);
+            
+            ctx.fillStyle = "white";
+            ctx.fill();
+        }
+
+        function clearScreen() {
+            const canvas = document.getElementById("planetCanvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+    <style>
+        body {
+            background-color: rgb(96, 93, 107);
+        }
+
+        h1 {
+            color: white;
+        }
+
+        #planetCanvas {
+            border: 1px solid white;
+            border-radius: 10px;
+        }
+
+        .container {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Planet Simulation</h1>
+    <div class="container">
+        <canvas id="planetCanvas" width="200" height="200"></canvas>
+        <button onClick="drawPlanet()">draw</button>
+        <button onClick="clearScreen()">clear screen</button>
+    </div>
+</body>
+</html>
+
