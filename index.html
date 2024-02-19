@@ -6,7 +6,8 @@
     <title>Planet Simulation</title>
     <script>
         class Planet {
-            constructor(x, y, mass, xVel, yVel) {
+            constructor(id, x, y, mass, xVel, yVel) {
+                this.id = id;
                 this.x = x;
                 this.y = y;
                 this.mass = mass;
@@ -69,11 +70,11 @@
         function getSimulationConfig() {
             const planetCount = document.getElementById("planetCount").value;
             const centralPlanet = document.getElementById("centralPlanet").value;
-            const planetMass = document.getElementById("planetMass").value;
+            let planetMass = document.getElementById("planetMass").value;
 
             if(!planetCount) alert("Please enter a valid number for the planet count.");
-            if(!planetMass) alert("Please enter a valid number for the planet mass.");
-
+            if(!planetMass) planetMass = document.getElementById("planetMass").placeholder;
+            
             return {
                 planetCount: planetCount,
                 centralPlanet: centralPlanet,
@@ -82,7 +83,7 @@
         }
 
         function getRandomInt(max) {
-            return Math.floor(Math.random() * max);
+            return Math.round(Math.random() * max);
         }
 
         function startSimulation() {
@@ -93,6 +94,7 @@
 
             for(let i = 0; i < config.planetCount; i++) {
                 const newPlanet = new Planet(
+                    i,
                     getRandomInt(canvas.width),
                     getRandomInt(canvas.height),
                     config.planetMass,
@@ -101,6 +103,30 @@
                 )
 
                 planetList.push(newPlanet);
+            }
+
+            let running = true;
+            while(running) {
+                let newPlanetList = [];
+                for (let mainPlanetIndex = 0; mainPlanetIndex < planetList.length; mainPlanetIndex++) {
+                    const mainPlanet = planetList[mainPlanetIndex];
+                    for (let otherPlanetIndex = 0; otherPlanetIndex < planetList.length; otherPlanetIndex++) {
+                        const otherPlanet = planetList[otherPlanetIndex];
+                        if (mainPlanet.id == otherPlanet.id) {
+                            continue;
+                        } else {
+                            // We arrive here when we compare two seperate planets.
+                            const radiusSum = mainPlanet.getRadius() + otherPlanet.getRadius();
+                            const distance = claculateDistance(mainPlanet, otherPlanet);
+
+                            if (distance < radiusSum) {
+                                // merge planets
+                            } else {
+                                // calculate acceleration
+                            }
+                        }
+                    }
+                }
             }
         }
     </script>
