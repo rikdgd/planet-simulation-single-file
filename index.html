@@ -66,14 +66,34 @@
             );
         }
         
-        function drawPlanet() {
+        function generatePlanetList(amount, mass) {
+            const canvas = document.getElementById("planetCanvas");
+            let planetList = [];
+            
+            for(let i = 0; i < amount; i++) {
+                const newPlanet = new Planet(
+                    i,
+                    getRandomInt(canvas.width),
+                    getRandomInt(canvas.height),
+                    mass,
+                    0,
+                    0
+                )
+                
+                planetList.push(newPlanet);
+            }
+            
+            return planetList;
+        }
+        
+        function drawPlanet(planet) {
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
             
             
             ctx.beginPath();
-            // ctx.arc(planet.x, planet.y, planet.radius, 0, 2 * Math.PI);
-            ctx.arc(100, 100, 20, 0, 2 * Math.PI);
+            ctx.arc(planet.x, planet.y, planet.radius, 0, 2 * Math.PI);
+            // ctx.arc(100, 100, 20, 0, 2 * Math.PI);
             
             ctx.fillStyle = "white";
             ctx.fill();
@@ -106,57 +126,74 @@
             return Math.round(Math.random() * max);
         }
         
-        function startSimulation() {
-            const config = getSimulationConfig();
-            const canvas = document.getElementById("planetCanvas");
-            clearCanvas();
-            let planetList = [];
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function updatePlanetList(planetList) {
+            let newPlanetList = [];
+            let removedPlanetsIdList = [];
             
-            for(let i = 0; i < config.planetCount; i++) {
-                const newPlanet = new Planet(
-                    i,
-                    getRandomInt(canvas.width),
-                    getRandomInt(canvas.height),
-                    config.planetMass,
-                    0,
-                    0
-                )
+            for (let mainPlanetIndex = 0; mainPlanetIndex < planetList.length; mainPlanetIndex++) {
+                let mainPlanet = planetList[mainPlanetIndex];
+                if (removedPlanetsIdList.includes(mainPlanet.id)) continue;
                 
-                planetList.push(newPlanet);
-            }
-            
-            let running = true;
-            while(running) {
-                let newPlanetList = [];
-                let removedPlanetsIdList = [];
-                for (let mainPlanetIndex = 0; mainPlanetIndex < planetList.length; mainPlanetIndex++) {
-                    const mainPlanet = planetList[mainPlanetIndex];
-                    if (removedPlanetsIdList.includes(mainPlanet.id)) continue;
-                    
-                    for (let otherPlanetIndex = 0; otherPlanetIndex < planetList.length; otherPlanetIndex++) {
-                        const otherPlanet = planetList[otherPlanetIndex];
-                        if (mainPlanet.id == otherPlanet.id) {
-                            continue;
+                for (let otherPlanetIndex = 0; otherPlanetIndex < planetList.length; otherPlanetIndex++) {
+                    const otherPlanet = planetList[otherPlanetIndex];
+                    if (mainPlanet.id == otherPlanet.id || removedPlanetsIdList.includes(otherPlanet.id)) {
+                        continue;
+                    } else {
+                        // We arrive here when we compare two seperate valid planets.
+                        const radiusSum = mainPlanet.getRadius() + otherPlanet.getRadius();
+                        const distance = claculateDistance(mainPlanet, otherPlanet);
+                        
+                        if (distance < radiusSum) {
+                            // merge planets
+                            mainPlanet = mergePlanets(mainPlanet, otherPlanet);
+                            removedPlanetsIdList.push(otherPlanet.id);
                         } else {
-                            // We arrive here when we compare two seperate planets.
-                            const radiusSum = mainPlanet.getRadius() + otherPlanet.getRadius();
-                            const distance = claculateDistance(mainPlanet, otherPlanet);
-                            
-                            if (distance < radiusSum) {
-                                // merge planets
-                                mainPlanet = mergePlanets(mainPlanet, otherPlanet);
-                                removedPlanetsIdList.push(otherPlanet.id);
-                            } else {
-                                // calculate acceleration
-                                const [xAcc, yAcc] = calculateAcceleration(mainPlanet, otherPlanet);
-                                mainPlanet.xVel = mainPlanet.xVel + xAcc;
-                                mainPlanet.yVel = mainPlanet.yVel + yAcc;
-                            }
+                            // calculate acceleration
+                            const [xAcc, yAcc] = calculateXYAcceleration(mainPlanet, otherPlanet);
+                            mainPlanet.xVel = mainPlanet.xVel + xAcc;
+                            mainPlanet.yVel = mainPlanet.yVel + yAcc;
                         }
                     }
                 }
                 
-                removedPlanetsIdList = [];
+                newPlanetList.push(mainPlanet);
+            }
+            
+            return newPlanetList;
+        }
+        
+        async function startSimulation() {
+            const frameTime = 100;   // 34 results in almost 30 fps
+            const config = getSimulationConfig();
+            const canvas = document.getElementById("planetCanvas");
+            clearCanvas();
+            let planetList = generatePlanetList(config.planetCount, config.planetMass);
+            
+            
+            let running = true;
+            while(running) {
+                const startTime = performance.now();
+                const newPlanetList = updatePlanetList(planetList);
+                planetList = newPlanetList;
+                console.log(planetList.length);
+                
+                planetList.forEach(planet => {
+                    drawPlanet(planet);
+                });
+                
+                if (planetList.length == 1) {
+                    running = false;
+                    console.log('simulation ended');
+                }
+                
+                const endTime = performance.now();
+                if (endTime - startTime < frameTime) {
+                    await sleep(frameTime - (endTime - startTime));
+                }
             }
         }
     </script>
