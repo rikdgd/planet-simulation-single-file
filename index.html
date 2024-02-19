@@ -66,13 +66,49 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        function startSimulation() {
+        function getSimulationConfig() {
+            const planetCount = document.getElementById("planetCount").value;
+            const centralPlanet = document.getElementById("centralPlanet").value;
+            const planetMass = document.getElementById("planetMass").value;
 
+            if(!planetCount) alert("Please enter a valid number for the planet count.");
+            if(!planetMass) alert("Please enter a valid number for the planet mass.");
+
+            return {
+                planetCount: planetCount,
+                centralPlanet: centralPlanet,
+                planetMass: planetMass
+            };
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function startSimulation() {
+            const config = getSimulationConfig();
+            const canvas = document.getElementById("planetCanvas");
+            clearCanvas();
+            let planetList = [];
+
+            for(let i = 0; i < config.planetCount; i++) {
+                const newPlanet = new Planet(
+                    getRandomInt(canvas.width),
+                    getRandomInt(canvas.height),
+                    config.planetMass,
+                    0,
+                    0
+                )
+
+                planetList.push(newPlanet);
+            }
         }
     </script>
     <style>
         body {
             background-color: rgb(78, 75, 90);
+            padding-left: 5%;
+            padding-right: 5%;
         }
 
         h1 {
@@ -101,7 +137,7 @@
             position: fixed;
             top: 2%;
             left: auto;
-            right: 2%;
+            right: 5%;
             bottom: auto;
             gap: 14px;
 
@@ -123,17 +159,22 @@
         <!-- buttons for debugging -->
         <button onClick="drawPlanet()">draw</button>
         <button onClick="clearCanvas()">clear screen</button>
+        <button onclick="getSimulationConfig()">test</button>
 
         <div class="simulationConfig">
-            <label for="planetCount">planet count:</label>
+            <label for="planetCount">Planet count:</label>
             <input id="planetCount" type="number"/>
             <div class="divider"></div>
 
-            <label for ="centralPlanet">start with big planet in center:</label>
+            <label for="centralPlanet">Start with big planet in center:</label>
             <input id="centralPlanet" type="checkbox"/>
             <div class="divider"></div>
 
-            <input id=""/>
+            <label for="planetMass">Enter a starting mass for the planets:</label>
+            <input id="planetMass" type="number" placeholder="15"/>
+            <div class="divider"></div>
+
+            <button onclick="startSimulation()">Start simulation!</button>
         </div>
     </div>
 </body>
