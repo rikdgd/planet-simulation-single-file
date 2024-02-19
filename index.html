@@ -108,18 +108,20 @@
         }
         
         function getSimulationConfig() {
-            const planetCount = document.getElementById("planetCount").value;
-            const centralPlanet = document.getElementById("centralPlanet").value;
-            let planetMass = document.getElementById("planetMass").value;
-            
-            if(!planetCount) alert("Please enter a valid number for the planet count.");
-            if(!planetMass) planetMass = document.getElementById("planetMass").placeholder;
-            
-            return {
-                planetCount: planetCount,
-                centralPlanet: centralPlanet,
-                planetMass: planetMass
-            };
+            try {
+                const planetCount = Number(document.getElementById("planetCount").value);
+                const centralPlanet = Boolean(document.getElementById("centralPlanet").value);
+                const planetMass = Number(document.getElementById("planetMass").value);
+                
+                return {
+                    planetCount: planetCount,
+                    centralPlanet: centralPlanet,
+                    planetMass: planetMass
+                };
+            } catch {
+                alert("The provided input was incorrect.");
+                return null;
+            }
         }
         
         function getRandomInt(max) {
@@ -167,8 +169,13 @@
         }
         
         async function startSimulation() {
-            const frameTime = 100;   // 34 results in almost 30 fps
             const config = getSimulationConfig();
+            if (!config) {
+                alert("Could not start simulation, your input is incorrect.");
+                return;
+            }
+            
+            const frameTime = 100;   // 34 results in almost 30 fps
             const canvas = document.getElementById("planetCanvas");
             clearCanvas();
             let planetList = generatePlanetList(config.planetCount, config.planetMass);
@@ -179,7 +186,7 @@
                 const startTime = performance.now();
                 const newPlanetList = updatePlanetList(planetList);
                 planetList = newPlanetList;
-                console.log(planetList.length);
+                console.log(planetList[0].mass);
                 
                 planetList.forEach(planet => {
                     drawPlanet(planet);
