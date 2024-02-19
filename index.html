@@ -10,7 +10,6 @@
                 this.x = x;
                 this.y = y;
                 this.mass = mass;
-                this.radius = massToRadius(mass);
                 this.xVel = xVel;
                 this.yVel = yVel;
             }
@@ -59,40 +58,83 @@
             ctx.fill();
         }
 
-        function clearScreen() {
+        function clearCanvas() {
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
 
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
+
+        function startSimulation() {
+
+        }
     </script>
     <style>
         body {
-            background-color: rgb(96, 93, 107);
+            background-color: rgb(78, 75, 90);
         }
 
         h1 {
-            color: white;
+            color: rgb(234, 231, 247);
+        }
+
+        label {
+            color: rgb(234, 231, 247);
         }
 
         #planetCanvas {
-            border: 1px solid white;
+            border: 1px solid rgb(234, 231, 247);
             border-radius: 10px;
         }
 
         .container {
             display: block;
         }
+
+        .simulationConfig {
+            background-color: rgb(49, 45, 63);
+            border-radius: 10px;
+            margin: 6px;
+            padding: 16px;
+
+            position: fixed;
+            top: 2%;
+            left: auto;
+            right: 2%;
+            bottom: auto;
+            gap: 14px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .divider {
+            width: auto;
+            height: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Planet Simulation</h1>
     <div class="container">
-        <canvas id="planetCanvas" width="200" height="200"></canvas>
+        <canvas id="planetCanvas" width="600" height="400"></canvas>
+
+        <!-- buttons for debugging -->
         <button onClick="drawPlanet()">draw</button>
-        <button onClick="clearScreen()">clear screen</button>
+        <button onClick="clearCanvas()">clear screen</button>
+
+        <div class="simulationConfig">
+            <label for="planetCount">planet count:</label>
+            <input id="planetCount" type="number"/>
+            <div class="divider"></div>
+
+            <label for ="centralPlanet">start with big planet in center:</label>
+            <input id="centralPlanet" type="checkbox"/>
+            <div class="divider"></div>
+
+            <input id=""/>
+        </div>
     </div>
 </body>
 </html>
-
