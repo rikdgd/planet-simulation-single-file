@@ -159,6 +159,9 @@
                             mainPlanet.xVel = mainPlanet.xVel + xAcc;
                             mainPlanet.yVel = mainPlanet.yVel + yAcc;
                         }
+                        
+                        mainPlanet.x = mainPlanet.x + mainPlanet.xVel;
+                        mainPlanet.y = mainPlanet.y + mainPlanet.yVel;
                     }
                 }
                 
@@ -175,18 +178,18 @@
                 return;
             }
             
-            const frameTime = 100;   // 34 results in almost 30 fps
+            const frameTime = 500;   // 34 results in almost 30 fps
             const canvas = document.getElementById("planetCanvas");
-            clearCanvas();
             let planetList = generatePlanetList(config.planetCount, config.planetMass);
             
             
             let running = true;
             while(running) {
                 const startTime = performance.now();
+                
+                clearCanvas();
                 const newPlanetList = updatePlanetList(planetList);
                 planetList = newPlanetList;
-                console.log(planetList[0].mass);
                 
                 planetList.forEach(planet => {
                     drawPlanet(planet);
@@ -194,7 +197,7 @@
                 
                 if (planetList.length == 1) {
                     running = false;
-                    console.log('simulation ended');
+                    alert('simulation ended.');
                 }
                 
                 const endTime = performance.now();
