@@ -90,10 +90,8 @@
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
             
-            
             ctx.beginPath();
-            ctx.arc(planet.x, planet.y, planet.radius, 0, 2 * Math.PI);
-            // ctx.arc(100, 100, 20, 0, 2 * Math.PI);
+            ctx.arc(planet.x, planet.y, planet.getRadius(), 0, 2 * Math.PI);
             
             ctx.fillStyle = "white";
             ctx.fill();
@@ -178,7 +176,7 @@
                 return;
             }
             
-            const frameTime = 500;   // 34 results in almost 30 fps
+            const frameTime = 34;   // 34 results in almost 30 fps
             const canvas = document.getElementById("planetCanvas");
             let planetList = generatePlanetList(config.planetCount, config.planetMass);
             
@@ -257,12 +255,7 @@
 <body>
     <h1>Planet Simulation</h1>
     <div class="container">
-        <canvas id="planetCanvas" width="600" height="400"></canvas>
-        
-        <!-- buttons for debugging -->
-        <button onClick="drawPlanet()">draw</button>
-        <button onClick="clearCanvas()">clear screen</button>
-        <button onclick="getSimulationConfig()">test</button>
+        <canvas id="planetCanvas" width="1200" height="800"></canvas>
         
         <div class="simulationConfig">
             <label for="planetCount">Planet count:</label>
