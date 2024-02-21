@@ -65,16 +65,29 @@
             );
         }
         
-        function generatePlanetList(amount, mass) {
+        function generatePlanetList(amount, mass, bigPlanet) {
             const canvas = document.getElementById("planetCanvas");
             let planetList = [];
             
-            for(let i = 0; i < amount; i++) {
+            for (let i = 0; i < amount; i++) {
                 const newPlanet = new Planet(
                     i,
                     getRandomInt(canvas.width),
                     getRandomInt(canvas.height),
                     mass,
+                    0,
+                    0
+                )
+                
+                planetList.push(newPlanet);
+            }
+            
+            if (bigPlanet) {
+                const newPlanet = new Planet(
+                    amount,
+                    canvas.width / 2,
+                    canvas.height / 2,
+                    mass * 10,
                     0,
                     0
                 )
@@ -107,15 +120,15 @@
         function getSimulationConfig() {
             try {
                 const planetCount = Number(document.getElementById("planetCount").value);
-                const centralPlanet = Boolean(document.getElementById("centralPlanet").value);
+                const centralPlanet = Boolean(document.getElementById("centralPlanet").checked);
                 let planetMass = Number(document.getElementById("planetMass").value);
                 
                 if (planetMass <= 0) planetMass = 25;
                 
                 return {
                     planetCount: planetCount,
-                    centralPlanet: centralPlanet,
-                    planetMass: planetMass
+                    planetMass: planetMass,
+                    centralPlanet: centralPlanet
                 };
             } catch {
                 alert("The provided input was incorrect.");
@@ -176,9 +189,9 @@
                 return;
             }
             
-            const frameTime = 34;   // a value of 34 results in almost 30 fps
+            const frameTime = 34;   // a value of 34 results in almost 30 Hertz.
             const canvas = document.getElementById("planetCanvas");
-            let planetList = generatePlanetList(config.planetCount, config.planetMass);
+            let planetList = generatePlanetList(config.planetCount, config.planetMass, config.centralPlanet);
             
             
             let running = true;
