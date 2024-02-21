@@ -21,7 +21,7 @@
         }
         
         // Calculates distance from planet A to planet B
-        function claculateDistance(planetA, planetB) {
+        function calculateDistance(planetA, planetB) {
             let distance = Math.sqrt((planetB.x - planetA.x)**2 + (planetB.y - planetA.y)**2);
             if (distance < 0) distance = distance * -1;
             return distance;
@@ -30,7 +30,7 @@
         // Calculates the force of gravity acted upon planet A by planet B.
         function calculateForceGravity(planetA, planetB) {
             const massSquared = planetA.mass * planetB.mass;
-            const distance = claculateDistance(planetA, planetB);
+            const distance = calculateDistance(planetA, planetB);
             return massSquared / distance**2;
         }
         
@@ -146,7 +146,7 @@
                     } else {
                         // We arrive here when we compare two seperate valid planets.
                         const radiusSum = mainPlanet.getRadius() + otherPlanet.getRadius();
-                        const distance = claculateDistance(mainPlanet, otherPlanet);
+                        const distance = calculateDistance(mainPlanet, otherPlanet);
                         
                         // Check if the planets need to be merged.
                         if (distance < radiusSum) {
