@@ -109,7 +109,9 @@
             try {
                 const planetCount = Number(document.getElementById("planetCount").value);
                 const centralPlanet = Boolean(document.getElementById("centralPlanet").value);
-                const planetMass = Number(document.getElementById("planetMass").value);
+                let planetMass = Number(document.getElementById("planetMass").value);
+                
+                if (planetMass <= 0) planetMass = 25;
                 
                 return {
                     planetCount: planetCount,
@@ -244,6 +246,7 @@
             
             display: flex;
             flex-direction: column;
+            max-width: 300px;
         }
         
         .divider {
@@ -262,12 +265,12 @@
             <input id="planetCount" type="number"/>
             <div class="divider"></div>
             
-            <label for="centralPlanet">Start with big planet in center:</label>
+            <!-- <label for="centralPlanet">Start with big planet in center. This adds an additional new planet.</label>
             <input id="centralPlanet" type="checkbox"/>
-            <div class="divider"></div>
+            <div class="divider"></div> -->
             
             <label for="planetMass">Enter a starting mass for the planets:</label>
-            <input id="planetMass" type="number" placeholder="15"/>
+            <input id="planetMass" type="number" placeholder="25"/>
             <div class="divider"></div>
             
             <button onclick="startSimulation()">Start simulation!</button>
