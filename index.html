@@ -140,16 +140,6 @@
             ctx.fillRect(x, y, canvas.width, canvas.height);
         }
         
-        // function translateCanvasToCenterPoint(canvas, x, y) {
-        //     const ctx = canvas.getContext("2d");
-        //     const currentTranslation = ctx.getTransform();
-            
-        //     const translationX = (x - (canvas.width / 2)) - currentTranslation.e;
-        //     const translationY = (y - (canvas.height / 2)) - currentTranslation.f;
-            
-        //     ctx.translate(translationX, translationY);
-        // }
-        
         function translateCanvasToCenterPoint(canvas, x, y) {
             const ctx = canvas.getContext("2d");
             const currentTranslation = ctx.getTransform();
@@ -162,7 +152,6 @@
             
             ctx.translate(translationX, translationY);
         }
-
         
         function getSimulationConfig() {
             try {
@@ -261,8 +250,6 @@
                 } else {
                     clearCanvas(0, 0);
                 }
-                
-                
                 
                 const newPlanetList = updatePlanetList(planetList);
                 planetList = newPlanetList;
