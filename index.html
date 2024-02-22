@@ -65,6 +65,23 @@
             );
         }
         
+        function calculateCenterOfMass(planetList) {
+            let totalMass = 0;
+            let centerOfMassX = 0;
+            let centerOfMassY = 0;
+            
+            planetList.forEach(planet => {
+                totalMass = totalMass + planet.mass;
+                centerOfMassX = centerOfMassX + planet.mass * planet.x;
+                centerOfMassY = centerOfMassY + planet.mass * planet.y;
+            });
+            
+            centerOfMassX = centerOfMassX / totalMass;
+            centerOfMassY = centerOfMassY / totalMass;
+            
+            return [centerOfMassX, centerOfMassY];
+        }
+        
         function generatePlanetList(amount, mass, bigPlanet, randomMovement) {
             const canvas = document.getElementById("planetCanvas");
             let planetList = [];
@@ -83,8 +100,6 @@
                     newPlanet.xVel = Math.random() * 0.04 - 0.02;
                     newPlanet.yVel = Math.random() * 0.04 - 0.02;
                 }
-                
-                console.log(newPlanet);
                 
                 planetList.push(newPlanet);
             }
@@ -119,10 +134,35 @@
         function clearCanvas() {
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
+            const currentTranslation = ctx.getTransform();
             
             ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(currentTranslation.e, currentTranslation.f, canvas.width, canvas.height);
         }
+        
+        // function translateCanvasToCenterPoint(canvas, x, y) {
+        //     const ctx = canvas.getContext("2d");
+        //     const currentTranslation = ctx.getTransform();
+            
+        //     const translationX = (x - (canvas.width / 2)) - currentTranslation.e;
+        //     const translationY = (y - (canvas.height / 2)) - currentTranslation.f;
+            
+        //     ctx.translate(translationX, translationY);
+        // }
+        
+        function translateCanvasToCenterPoint(canvas, x, y) {
+            const ctx = canvas.getContext("2d");
+            const currentTranslation = ctx.getTransform();
+        
+            // Reset the transformation matrix
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            
+            const translationX = canvas.width / 2 - x;
+            const translationY = canvas.height / 2 - y;
+            
+            ctx.translate(translationX, translationY);
+        }
+
         
         function getSimulationConfig() {
             try {
@@ -130,6 +170,7 @@
                 let planetMass = Number(document.getElementById("planetMass").value);
                 const centralPlanet = Boolean(document.getElementById("centralPlanet").checked);
                 const startingMovement = Boolean(document.getElementById("startingMovement").checked);
+                const centerCamera = Boolean(document.getElementById("centerCamera").checked);
                 
                 if (planetMass <= 0) planetMass = 25;
                 
@@ -137,7 +178,8 @@
                     planetCount: planetCount,
                     planetMass: planetMass,
                     centralPlanet: centralPlanet,
-                    startingMovement: startingMovement
+                    startingMovement: startingMovement,
+                    centerCamera: centerCamera
                 };
             } catch {
                 alert("The provided input was incorrect.");
@@ -212,7 +254,13 @@
             while(running) {
                 const startTime = performance.now();
                 
+                if (config.centerCamera) {
+                    const [centerOfMassX, centerOfMassY] = calculateCenterOfMass(planetList);
+                    translateCanvasToCenterPoint(canvas, centerOfMassX, centerOfMassY);
+                }
                 clearCanvas();
+                
+                
                 const newPlanetList = updatePlanetList(planetList);
                 planetList = newPlanetList;
                 
@@ -300,6 +348,10 @@
             
             <label for="centralPlanet">Start with big planet in center. This adds an additional new planet.</label>
             <input id="centralPlanet" type="checkbox"/>
+            <div class="divider"></div>
+            
+            <label for="centerCamera">Keep the camera focussed on the center of mass.</label>
+            <input id="centerCamera" type="checkbox"/>
             <div class="divider"></div>
             
             <button onclick="startSimulation()">Start simulation!</button>
