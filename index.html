@@ -131,13 +131,13 @@
             ctx.fill();
         }
         
-        function clearCanvas() {
+        function clearCanvas(x, y) {
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
             const currentTranslation = ctx.getTransform();
             
             ctx.fillStyle = "black";
-            ctx.fillRect(currentTranslation.e, currentTranslation.f, canvas.width, canvas.height);
+            ctx.fillRect(x, y, canvas.width, canvas.height);
         }
         
         // function translateCanvasToCenterPoint(canvas, x, y) {
@@ -257,8 +257,11 @@
                 if (config.centerCamera) {
                     const [centerOfMassX, centerOfMassY] = calculateCenterOfMass(planetList);
                     translateCanvasToCenterPoint(canvas, centerOfMassX, centerOfMassY);
+                    clearCanvas(centerOfMassX - canvas.width / 2, centerOfMassY - canvas.height / 2);
+                } else {
+                    clearCanvas(0, 0);
                 }
-                clearCanvas();
+                
                 
                 
                 const newPlanetList = updatePlanetList(planetList);
