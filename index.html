@@ -109,9 +109,9 @@
                     0
                 )
                 
-                if (randomMovement) {
-                    newPlanet.xVel = Math.random() * 0.04 - 0.02;
-                    newPlanet.yVel = Math.random() * 0.04 - 0.02;
+                if (randomMovement > 0) {
+                    newPlanet.xVel = Math.random() * randomMovement - (randomMovement / 2);
+                    newPlanet.yVel = Math.random() * randomMovement - (randomMovement / 2);
                 }
                 
                 planetList.push(newPlanet);
@@ -177,11 +177,18 @@
                 const planetCount = Number(document.getElementById("planetCount").value);
                 let planetMass = Number(document.getElementById("planetMass").value);
                 const centralPlanet = Boolean(document.getElementById("centralPlanet").checked);
-                const startingMovement = Boolean(document.getElementById("startingMovement").checked);
+                const startingMovement = Number(document.getElementById("startingMovement").value);
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
                 if (planetMass <= 0) planetMass = 5;
+                
+                if (!startingMovement) {
+                    startingMovement = 0;
+                } else if (startingMovement < 0) {
+                    startingMovement = -1 * startingMovement;
+                }
+                startingMovement = startingMovement / 1000;
                 
                 if (focusCenterOfMass && focusBiggestMass) {
                     alert('You cannot focus on both the center of mass and the biggest mass at the same time!');
@@ -365,8 +372,9 @@
             <input id="planetMass" type="number" placeholder="5"/>
             <div class="divider"></div>
             
-            <label for="startingMovement">Whether or not to the planets start with random movement.</label>
-            <input id="startingMovement" type="checkbox"/>
+            <label for="startingMovement">Enter a maximum starting velocity for the planets.</label>
+            <input id="startingMovement" type="range" min="0" max="10000" value="2000"/> 
+            <p>Value: <output id="startingMovementValue"></output></p>
             <div class="divider"></div>
             
             <label for="centralPlanet">Start with big planet in center. This adds an additional new planet.</label>
