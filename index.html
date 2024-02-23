@@ -177,7 +177,7 @@
                 const planetCount = Number(document.getElementById("planetCount").value);
                 let planetMass = Number(document.getElementById("planetMass").value);
                 const centralPlanet = Boolean(document.getElementById("centralPlanet").checked);
-                const startingMovement = Number(document.getElementById("startingMovement").value);
+                let startingMovement = Number(document.getElementById("startingMovement").value);
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
@@ -369,8 +369,8 @@
             <div class="divider"></div>
             
             <label for="startingMovement">Enter a maximum starting velocity for the planets.</label>
-            <input id="startingMovement" type="range" min="0" max="10000" value="2000" step="100"/> 
-            <p>value: <span id="startingMovementValue">2000</span></p>
+            <p>value: <span id="startingMovementValue"></span></p>
+            <input id="startingMovement" type="range" min="0" max="100" value="10"/> 
             <div class="divider"></div>
             
             <label for="centralPlanet">Start with big planet in center. This adds an additional new planet.</label>
