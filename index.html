@@ -190,11 +190,7 @@
                 
                 if (planetMass <= 0) planetMass = 5;
                 
-                if (!startingMovement) {
-                    startingMovement = 0;
-                } else if (startingMovement < 0) {
-                    startingMovement = -1 * startingMovement;
-                }
+                // Just so the numbers entered as velocity make a little bit more sence
                 startingMovement = startingMovement / 1000;
                 
                 if (focusCenterOfMass && focusBiggestMass) {
@@ -215,6 +211,15 @@
                 alert("The provided input was incorrect.");
                 return null;
             }
+        }
+        
+        function ensureMovementBounds(input) {
+            const minValue = parseInt(input.min);
+            const maxValue = parseInt(input.max);
+            const value = parseInt(input.value);
+            
+            if (value < minValue) input.value = minValue;
+            if (value > maxValue) input.value = maxValue;
         }
         
         function getRandomInt(max) {
@@ -287,8 +292,6 @@
                 
                 if (config.focusCenterOfMass) {
                     const [centerOfMassX, centerOfMassY] = calculateCenterOfMass(planetList);
-                    // translateCanvasToCenterPoint(canvas, centerOfMassX, centerOfMassY);
-                    // clearCanvas(centerOfMassX - canvas.width / 2, centerOfMassY - canvas.height / 2);
                     translatePlanetCanvas(canvas, centerOfMassX, centerOfMassY);
                 } else if (config.focusBiggestMass) {
                     const biggestMass = getPlanetWithBiggestMass(planetList);
@@ -397,9 +400,8 @@
             <input id="planetMass" type="number" placeholder="5"/>
             <div class="divider"></div>
             
-            <label for="startingMovement">Enter a maximum starting velocity for the planets.</label>
-            <p>value: <span id="startingMovementValue"></span></p>
-            <input id="startingMovement" type="range" min="0" max="100" value="10"/> 
+            <label for="startingMovement">Enter a maximum starting velocity for the planets. (max. 1000)</label>
+            <input id="startingMovement" type="number" min="0" max="1000" value="10" onchange="ensureMovementBounds(this)"/> 
             <div class="divider"></div>
             
             <label for="centralPlanet">Start with a 10x bigger planet in the center. This adds an additional new planet.</label>
@@ -417,14 +419,5 @@
             <button onclick="startSimulation()">Start simulation!</button>
         </div>
     </div>
-    <script>
-        // Add event handling to body to assure it has been rendered.
-        const movementSlider = document.getElementById("startingMovement");
-        const selectedMovementValue = document.getElementById("startingMovementValue");
-        
-        movementSlider.addEventListener('input', () => {
-            selectedMovementValue.textContent = movementSlider.value;
-        });
-    </script>
 </body>
 </html>
