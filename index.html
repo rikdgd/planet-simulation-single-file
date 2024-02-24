@@ -84,16 +84,16 @@
             return [centerOfMassX, centerOfMassY];
         }
         
-        function generatePlanetList(amount, mass, bigPlanet, randomMovement) {
+        function generatePlanetList(amount, mass, bigPlanetMassFactor, randomMovement) {
             const canvas = document.getElementById("planetCanvas");
             let planetList = [];
             
-            if (bigPlanet) {
+            if (bigPlanetMassFactor > 0) {
                 const newPlanet = new Planet(
                     0,
                     canvas.width / 2,
                     canvas.height / 2,
-                    mass * 10,
+                    mass * bigPlanetMassFactor,
                     0,
                     0
                 )
@@ -183,12 +183,14 @@
             try {
                 const planetCount = Number(document.getElementById("planetCount").value);
                 let planetMass = Number(document.getElementById("planetMass").value);
-                const centralPlanet = Boolean(document.getElementById("centralPlanet").checked);
+                let centralPlanetMassFactor = Number(document.getElementById("centralPlanetMassFactor").value);
                 let startingMovement = Number(document.getElementById("startingMovement").value);
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
                 if (planetMass <= 0) planetMass = 5;
+                
+                if (centralPlanetMassFactor < 0) centralPlanetMassFactor = 0;
                 
                 // Just so the numbers entered as velocity make a little bit more sence
                 startingMovement = startingMovement / 1000;
@@ -202,7 +204,7 @@
                 return {
                     planetCount: planetCount,
                     planetMass: planetMass,
-                    centralPlanet: centralPlanet,
+                    centralPlanetMassFactor: centralPlanetMassFactor,
                     startingMovement: startingMovement,
                     focusCenterOfMass: focusCenterOfMass,
                     focusBiggestMass: focusBiggestMass
@@ -280,7 +282,7 @@
             let planetList = generatePlanetList(
                 config.planetCount, 
                 config.planetMass, 
-                config.centralPlanet, 
+                config.centralPlanetMassFactor, 
                 config.startingMovement
             );
             
@@ -296,7 +298,6 @@
                 } else if (config.focusBiggestMass) {
                     const biggestMass = getPlanetWithBiggestMass(planetList);
                     const [biggestMassX, biggestMassY] = [biggestMass.x, biggestMass.y];
-                    console.log(biggestMass);
                     translatePlanetCanvas(canvas, biggestMassX, biggestMassY);
                 } else {
                     clearCanvas(0, 0);
@@ -404,8 +405,8 @@
             <input id="startingMovement" type="number" min="0" max="1000" value="10" onchange="ensureMovementBounds(this)"/> 
             <div class="divider"></div>
             
-            <label for="centralPlanet">Start with a 10x bigger planet in the center. This adds an additional new planet.</label>
-            <input id="centralPlanet" type="checkbox"/>
+            <label for="centralPlanetMassFactor">Central planet mass factor, 0 for none.</label>
+            <input id="centralPlanetMassFactor" type="number" min="0" value="100"/>
             <div class="divider"></div>
             
             <label for="focusCenterOfMass">Keep the camera focussed on the center of mass.</label>
