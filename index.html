@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planet Simulation</title>
     <script>
+        let remaingPlanetsCounter = null;
+        
         class Planet {
             constructor(id, x, y, mass, xVel, yVel) {
                 this.id = id;
@@ -142,6 +144,11 @@
             ctx.fill();
         }
         
+        function updatePlanetCounter(count) {
+            const remaingPlanetsCounter = document.getElementById("remaingPlanetsCounter");
+            remaingPlanetsCounter.textContent = count;
+        }
+        
         function clearCanvas(x, y) {
             const canvas = document.getElementById("planetCanvas");
             const ctx = canvas.getContext("2d");
@@ -275,6 +282,7 @@
             
             let running = true;
             while(running) {
+                updatePlanetCounter(planetList.length);
                 const startTime = performance.now();
                 
                 if (config.focusCenterOfMass) {
@@ -300,6 +308,7 @@
                 
                 if (planetList.length == 1) {
                     running = false;
+                    updatePlanetCounter(1);
                     alert('simulation ended.');
                 }
                 
@@ -315,10 +324,15 @@
             background-color: rgb(78, 75, 90);
             padding-left: 5%;
             padding-right: 5%;
+            font-family: Arial, sans-serif
         }
         
         h1, p, label {
             color: rgb(234, 231, 247);
+        }
+        
+        h1 {
+            margin-right: 200px;
         }
         
         #planetCanvas {
@@ -328,6 +342,18 @@
         
         .container {
             display: block;
+        }
+        
+        .headerContainer {
+            display: flex;
+            flex-direction: space-between;
+            align-items: baseline;
+        }
+        
+        .planetCounter {
+            font-size: 13px;
+            margin-left: 550px;
+            color: rgb(199, 197, 211);
         }
         
         .simulationConfig {
@@ -355,7 +381,10 @@
     </style>
 </head>
 <body>
-    <h1>Planet Simulation</h1>
+    <div class="headerContainer">
+        <h1>Planet Simulation</h1>
+        <p class="planetCounter">Planets remaining: <span id="remaingPlanetsCounter"></span></p>
+    </div>
     <div class="container">
         <canvas id="planetCanvas" width="1200" height="800"></canvas>
         
@@ -373,7 +402,7 @@
             <input id="startingMovement" type="range" min="0" max="100" value="10"/> 
             <div class="divider"></div>
             
-            <label for="centralPlanet">Start with big planet in center. This adds an additional new planet.</label>
+            <label for="centralPlanet">Start with a 10x bigger planet in the center. This adds an additional new planet.</label>
             <input id="centralPlanet" type="checkbox"/>
             <div class="divider"></div>
             
@@ -381,7 +410,7 @@
             <input id="focusCenterOfMass" type="checkbox"/>
             <div class="divider"></div>
             
-            <label for="focusBiggestMass">Keep the camera focussed on the planet with the highest mass. Centers the first if they are the same.</label>
+            <label for="focusBiggestMass">Keep the camera focussed on the planet with the greatest mass. Centers the first if they are the same.</label>
             <input id="focusBiggestMass" type="checkbox" checked/>
             <div class="divider"></div>
             
