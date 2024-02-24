@@ -188,7 +188,7 @@
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
-                if (planetMass <= 0) planetMass = 5;
+                if (planetMass <= 0) planetMass = 2;
                 
                 if (centralPlanetMassFactor < 0) centralPlanetMassFactor = 0;
                 
@@ -394,15 +394,15 @@
         
         <div class="simulationConfig">
             <label for="planetCount">Planet count:</label>
-            <input id="planetCount" type="number"/>
+            <input id="planetCount" type="number" value="100"/>
             <div class="divider"></div>
             
             <label for="planetMass">Enter a starting mass for the planets:</label>
-            <input id="planetMass" type="number" placeholder="5"/>
+            <input id="planetMass" type="number" placeholder="2"/>
             <div class="divider"></div>
             
             <label for="startingMovement">Enter a maximum starting velocity for the planets. (max. 1000)</label>
-            <input id="startingMovement" type="number" min="0" max="1000" value="10" onchange="ensureMovementBounds(this)"/> 
+            <input id="startingMovement" type="number" min="0" max="1000" value="20" onchange="ensureMovementBounds(this)"/> 
             <div class="divider"></div>
             
             <label for="centralPlanetMassFactor">Central planet mass factor, 0 for none.</label>
