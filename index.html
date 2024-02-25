@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planet Simulation</title>
     <script>
+        const gravitationalConstant = 6.674 * Math.pow(10, -11);
         let remaingPlanetsCounter = null;
         
         class Planet {
@@ -42,8 +43,9 @@
             const yDistance = planetB.y - planetA.y;
             const forceGravity = calculateForceGravity(planetA, planetB);
             
-            const xAcceleration = (forceGravity * xDistance) * 0.000000067 * planetB.mass;
-            const yAcceleration = (forceGravity * yDistance) * 0.000000067 * planetB.mass;
+            
+            const xAcceleration = (forceGravity * xDistance) * gravitationalConstant * planetB.mass;
+            const yAcceleration = (forceGravity * yDistance) * gravitationalConstant * planetB.mass;
             return [xAcceleration, yAcceleration];
         }
         
