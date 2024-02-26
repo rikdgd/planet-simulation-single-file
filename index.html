@@ -6,6 +6,7 @@
     <title>Planet Simulation</title>
     <script>
         const gravitationalConstant = 6.674 * Math.pow(10, -11);
+        const frameTime = 34;   // a value of 34 results in almost 30 Hertz.
         let remaingPlanetsCounter = null;
         
         class Planet {
@@ -19,7 +20,7 @@
             }
             
             getRadius() {
-                return Math.pow(this.mass / ((4*Math.PI) / 3), 1/3);
+                return Math.pow((this.mass / 5000) / ((4*Math.PI) / 3), 1/3);
             }
         }
         
@@ -34,7 +35,7 @@
         function calculateForceGravity(planetA, planetB) {
             const massSquared = planetA.mass * planetB.mass;
             const distance = calculateDistance(planetA, planetB);
-            return massSquared / distance**2;
+            return gravitationalConstant * (massSquared / distance**2);
         }
         
         // Calculates the acceleration of planet A due to planet B
@@ -84,6 +85,12 @@
             centerOfMassY = centerOfMassY / totalMass;
             
             return [centerOfMassX, centerOfMassY];
+        }
+        
+        // Calculates the orbital velocity for planet A to orbit around planet B.
+        function calculateOrbitalVelocity(planetA, planetB) {
+            const orbitRadius = calculateDistance(planetA, planetB);
+            return Math.sqrt((gravitationalConstant * planetB.mass) / orbitRadius);
         }
         
         function generatePlanetList(amount, mass, bigPlanetMassFactor, randomMovement) {
@@ -187,10 +194,11 @@
                 let planetMass = Number(document.getElementById("planetMass").value);
                 let centralPlanetMassFactor = Number(document.getElementById("centralPlanetMassFactor").value);
                 let startingMovement = Number(document.getElementById("startingMovement").value);
+                const orbitalVelocity = Boolean(document.getElementById("orbitalVelocity").checked);
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
-                if (planetMass <= 0) planetMass = 2;
+                if (planetMass <= 0) planetMass = 6000;
                 
                 if (centralPlanetMassFactor < 0) centralPlanetMassFactor = 0;
                 
@@ -208,6 +216,7 @@
                     planetMass: planetMass,
                     centralPlanetMassFactor: centralPlanetMassFactor,
                     startingMovement: startingMovement,
+                    orbitalVelocity: orbitalVelocity,
                     focusCenterOfMass: focusCenterOfMass,
                     focusBiggestMass: focusBiggestMass
                 };
@@ -279,7 +288,6 @@
                 return;
             }
             
-            const frameTime = 34;   // a value of 34 results in almost 30 Hertz.
             const canvas = document.getElementById("planetCanvas");
             let planetList = generatePlanetList(
                 config.planetCount, 
@@ -287,6 +295,30 @@
                 config.centralPlanetMassFactor, 
                 config.startingMovement
             );
+            
+            if (config.orbitalVelocity) {
+                const bigPlanet = planetList.filter(planet => planet.id === 0)[0];
+                if (bigPlanet) {
+                    let newPlanetList = [];
+                    
+                    planetList.forEach((planet) => {
+                        planet.y = canvas.height / 2;
+                        
+                        // 0 is the id for the bigger central planet
+                        if (planet.id > 0) {
+                            planet.xVel = 0;
+                            planet.yVel = calculateOrbitalVelocity(planet, bigPlanet);
+                        }
+                        
+                        console.log(planet);
+                        newPlanetList.push(planet);
+                    });
+                    
+                    planetList = newPlanetList;
+                } else {
+                    alert("There must be a central planet in order to generate stable orbits!");
+                }
+            }
             
             
             let running = true;
@@ -402,19 +434,23 @@
         
         <div class="simulationConfig">
             <label for="planetCount">Planet count:</label>
-            <input id="planetCount" type="number" value="100"/>
+            <input id="planetCount" type="number" value="200"/>
             <div class="divider"></div>
             
             <label for="planetMass">Enter a starting mass for the planets:</label>
-            <input id="planetMass" type="number" placeholder="2"/>
+            <input id="planetMass" type="number" placeholder="6000"/>
             <div class="divider"></div>
             
             <label for="startingMovement">Enter a maximum starting velocity for the planets. (max. 1000)</label>
-            <input id="startingMovement" type="number" min="0" max="1000" value="20" onchange="ensureMovementBounds(this)"/> 
+            <input id="startingMovement" type="number" min="0" max="1000" value="10" onchange="ensureMovementBounds(this)"/> 
             <div class="divider"></div>
             
             <label for="centralPlanetMassFactor">Central planet mass factor, 0 for none.</label>
-            <input id="centralPlanetMassFactor" type="number" min="0" value="100"/>
+            <input id="centralPlanetMassFactor" type="number" min="0" value="2000"/>
+            <div class="divider"></div>
+            
+            <label for="orbitalVelocity">Attempt to create stable orbits.</label>
+            <input id="orbitalVelocity" type="checkbox"/>
             <div class="divider"></div>
             
             <label for="focusCenterOfMass">Keep the camera focussed on the center of mass.</label>
