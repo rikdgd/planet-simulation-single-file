@@ -44,9 +44,8 @@
             const yDistance = planetB.y - planetA.y;
             const forceGravity = calculateForceGravity(planetA, planetB);
             
-            
-            const xAcceleration = (forceGravity * xDistance) * gravitationalConstant * planetB.mass;
-            const yAcceleration = (forceGravity * yDistance) * gravitationalConstant * planetB.mass;
+            const xAcceleration = (forceGravity * xDistance) / planetA.mass;
+            const yAcceleration = (forceGravity * yDistance) / planetA.mass;
             return [xAcceleration, yAcceleration];
         }
         
@@ -281,6 +280,30 @@
             return newPlanetList;
         }
         
+        function convertToOrbitalVelocities(planetList) {
+            const bigPlanet = planetList.filter(planet => planet.id === 0)[0];
+            if (bigPlanet) {
+                let newPlanetList = [];
+                
+                planetList.forEach((planet) => {
+                    planet.y = bigPlanet.y;
+                    
+                    // 0 is the id for the bigger central planet
+                    if (planet.id > 0) {
+                        planet.xVel = 0;
+                        planet.yVel = calculateOrbitalVelocity(planet, bigPlanet);
+                    }
+                    
+                    newPlanetList.push(planet);
+                });
+                
+                return newPlanetList;
+            } else {
+                alert("There must be a central planet in order to generate stable orbits!");
+                return planetList;
+            }
+        }
+        
         async function startSimulation() {
             const config = getSimulationConfig();
             if (!config) {
@@ -297,27 +320,7 @@
             );
             
             if (config.orbitalVelocity) {
-                const bigPlanet = planetList.filter(planet => planet.id === 0)[0];
-                if (bigPlanet) {
-                    let newPlanetList = [];
-                    
-                    planetList.forEach((planet) => {
-                        planet.y = canvas.height / 2;
-                        
-                        // 0 is the id for the bigger central planet
-                        if (planet.id > 0) {
-                            planet.xVel = 0;
-                            planet.yVel = calculateOrbitalVelocity(planet, bigPlanet);
-                        }
-                        
-                        console.log(planet);
-                        newPlanetList.push(planet);
-                    });
-                    
-                    planetList = newPlanetList;
-                } else {
-                    alert("There must be a central planet in order to generate stable orbits!");
-                }
+                planetList = convertToOrbitalVelocities(planetList);
             }
             
             
@@ -434,22 +437,22 @@
         
         <div class="simulationConfig">
             <label for="planetCount">Planet count:</label>
-            <input id="planetCount" type="number" value="200"/>
+            <input id="planetCount" type="number" value="500"/>
             <div class="divider"></div>
             
             <label for="planetMass">Enter a starting mass for the planets:</label>
-            <input id="planetMass" type="number" placeholder="6000"/>
+            <input id="planetMass" type="number" placeholder="5000"/>
             <div class="divider"></div>
             
             <label for="startingMovement">Enter a maximum starting velocity for the planets. (max. 1000)</label>
-            <input id="startingMovement" type="number" min="0" max="1000" value="10" onchange="ensureMovementBounds(this)"/> 
+            <input id="startingMovement" type="number" min="0" max="1000" value="40" onchange="ensureMovementBounds(this)"/> 
             <div class="divider"></div>
             
             <label for="centralPlanetMassFactor">Central planet mass factor, 0 for none.</label>
-            <input id="centralPlanetMassFactor" type="number" min="0" value="2000"/>
+            <input id="centralPlanetMassFactor" type="number" min="0" value="200000"/>
             <div class="divider"></div>
             
-            <label for="orbitalVelocity">Attempt to create stable orbits.</label>
+            <label for="orbitalVelocity">Attempt to create stable orbits. (Experimental)</label>
             <input id="orbitalVelocity" type="checkbox"/>
             <div class="divider"></div>
             
