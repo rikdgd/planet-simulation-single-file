@@ -365,7 +365,12 @@
             background-color: rgb(78, 75, 90);
             padding-left: 5%;
             padding-right: 5%;
-            font-family: Arial, sans-serif
+            font-family: Arial, sans-serif;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            columns: 1;
         }
         
         h1, p, label {
@@ -379,22 +384,37 @@
         #planetCanvas {
             border: 1px solid rgb(234, 231, 247);
             border-radius: 10px;
+            
+            max-width: 80vw;
+            max-height: 80vh;
+            
+            min-width: 600px;
+            min-height: 400px;
         }
         
         .container {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 1vw;
+        }
+        
+        .canvasContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         
         .headerContainer {
             display: flex;
-            flex-direction: space-between;
+            justify-content: space-between;
             align-items: baseline;
+            width: 55vw;
         }
         
         .planetCounter {
             font-size: 13px;
             color: rgb(199, 197, 211);
-            margin-left: 550px;
         }
         
         .smallText {
@@ -409,19 +429,21 @@
             margin: 6px;
             padding: 16px;
             
-            position: fixed;
+            /* position: fixed;
             top: 2%;
             left: auto;
             right: 5%;
-            bottom: auto;
-            gap: 14px;
+            bottom: auto; */
+            gap: 0.5rem;
             
             display: flex;
             flex-direction: column;
             max-width: 300px;
+            min-width: 10rem;
+            
             
             overflow: auto;
-            max-height: 85%;
+            max-height: 75vh;
         }
         
         .divider {
@@ -431,12 +453,15 @@
     </style>
 </head>
 <body>
-    <div class="headerContainer">
-        <h1>Planet Simulation</h1>
-        <p class="planetCounter">Planets remaining: <span id="remaingPlanetsCounter"></span></p>
-    </div>
     <div class="container">
-        <canvas id="planetCanvas" width="1200" height="800"></canvas>
+        
+        <div class="canvasContainer">
+            <div class="headerContainer">
+                <h1>Planet Simulation</h1>
+                <p class="planetCounter">Planets remaining: <span id="remaingPlanetsCounter"></span></p>
+            </div>
+            <canvas id="planetCanvas" width="1200" height="800"></canvas>
+        </div>
         
         <div class="simulationConfig">
             <label for="planetCount">Planet count:</label>
