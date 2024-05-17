@@ -197,7 +197,7 @@
                 let focusCenterOfMass = Boolean(document.getElementById("focusCenterOfMass").checked);
                 let focusBiggestMass = Boolean(document.getElementById("focusBiggestMass").checked);
                 
-                if (planetMass <= 0) planetMass = 6000;
+                if (planetMass <= 0) planetMass = 5000;
                 
                 if (centralPlanetMassFactor < 0) centralPlanetMassFactor = 0;
                 
@@ -243,12 +243,16 @@
         }
         
         function updatePlanetList(planetList) {
+            const totalMass = calcTotalMass(planetList);
+            
             let newPlanetList = [];
             let removedPlanetsIdList = [];
             
             for (let mainPlanetIndex = 0; mainPlanetIndex < planetList.length; mainPlanetIndex++) {
                 let mainPlanet = planetList[mainPlanetIndex];
-                if (removedPlanetsIdList.includes(mainPlanet.id)) continue;
+                if (removedPlanetsIdList.includes(mainPlanet.id)) {
+                    continue;
+                }
                 
                 for (let otherPlanetIndex = 0; otherPlanetIndex < planetList.length; otherPlanetIndex++) {
                     const otherPlanet = planetList[otherPlanetIndex];
@@ -277,7 +281,12 @@
                 newPlanetList.push(mainPlanet);
             }
             
-            return newPlanetList;
+            const filteredPlanetList = newPlanetList.filter(planet => {
+                return !removedPlanetsIdList.includes(planet.id);
+            });
+            
+            const newTotMass = calcTotalMass(filteredPlanetList);
+            return filteredPlanetList;
         }
         
         function convertToOrbitalVelocities(planetList) {
@@ -302,6 +311,16 @@
                 alert("There must be a central planet in order to generate stable orbits!");
                 return planetList;
             }
+        }
+        
+        function calcTotalMass(planetList) {
+            let totalMass = 0;
+            
+            planetList.forEach((planet) => {
+                totalMass += planet.mass;
+            });
+            
+            return totalMass;
         }
         
         async function startSimulation() {
