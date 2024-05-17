@@ -243,8 +243,6 @@
         }
         
         function updatePlanetList(planetList) {
-            const totalMass = calcTotalMass(planetList);
-            
             let newPlanetList = [];
             let removedPlanetsIdList = [];
             
@@ -285,7 +283,6 @@
                 return !removedPlanetsIdList.includes(planet.id);
             });
             
-            const newTotMass = calcTotalMass(filteredPlanetList);
             return filteredPlanetList;
         }
         
